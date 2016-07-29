@@ -1,5 +1,3 @@
-/* jshint asi: true */
-
 var addresses = [
   '3PnrcAMkR7BfwkR1q3epPe2K52eYAZnu5s'
 ]

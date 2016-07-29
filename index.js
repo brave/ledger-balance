@@ -1,5 +1,3 @@
-/* jshint asi: true */
-
 var datax = require('data-expression')
 var http = require('http')
 var https = require('https')
@@ -20,9 +18,16 @@ var schema = Joi.array().items(Joi.object().keys(
 ))
 
 var providers = [
+  // blockexplorer and bitpay both running insight API
   { name: 'Bitcoin Block Explorer',
     site: 'https://blockexplorer.com/',
     server: 'https://blockexplorer.com',
+    path: "'/api/addr/' + address + '?noTxList=1'",
+    satoshis: 'body.balanceSat'
+  },
+  { name: 'BitPay',
+    site: 'https://insight.bitpay.com',
+    server: 'https://insight.bitpay.com',
     path: "'/api/addr/' + address + '?noTxList=1'",
     satoshis: 'body.balanceSat'
   },
@@ -39,14 +44,6 @@ var providers = [
     server: 'https://api.biteasy.com',
     path: "'/v2/btc/mainnet/addresses/' + address",
     satoshis: 'body.status === 200 && body.data.balance'
-  },
-
-  // blockexplorer and bitpay both running insight
-  { name: 'bitpay',
-    site: 'https://insight.bitpay.com',
-    server: 'https://insight.bitpay.com',
-    path: "'/api/addr/' + address + '?noTxList=1'",
-    satoshis: 'body.balanceSat'
   },
 
   { name: 'Blockchain.info',

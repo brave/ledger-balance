@@ -1,5 +1,3 @@
-/* jshint asi: true */
-
 var gulp = require('gulp')
 var del = require('del')
 var runSequence = require('run-sequence')
