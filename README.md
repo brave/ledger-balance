@@ -15,6 +15,26 @@ Do so using a list of blockchain reporters (providers) that is weighted over tim
           console.log('address=' + address + ' provider=' + provider.name + ' satoshis=' + result)
         })
 
+This method works by using a modified [round-robin](https://en.wikipedia.org/wiki/Round-robin_DNS) algorithm with a simple
+scoring system:
+
+- each time that `getBalance` is called, it shuffles the list of providers and then orders them according to each provider's score
+
+- each provider is tried in order and the first (successful) result is returned
+
+- if  the attempt is successful,
+then the provider's score is set to a number between `-250` and `5000` that corresponds to the number of milli-seconds it to took to round-trip and process the request
+
+- if the attempt fails, then the provider score is set to one of:
+
+    - on DNS (or other network) error: -350;
+
+    - on timeout: -500;
+
+    - HTTP error: -750; or,
+
+    - on internal error: -1001 (thereby disqualifying the provider from further consideration)
+
 ### Add to the list of Providers
 
 Each of these properties is mandatory:
