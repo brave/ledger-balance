@@ -1,6 +1,6 @@
 {
   "name": "ledger-balance",
-  "version": "0.8.35",
+  "version": "0.8.36",
   "description": "Find the balance associated with a Bitcoin wallet.",
   "main": "index.js",
   "scripts": {
