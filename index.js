@@ -5,7 +5,7 @@ var Joi = require('joi')
 var underscore = require('underscore')
 var url = require('url')
 
-var schema = Joi.array().items(Joi.object().keys(
+var schema = Joi.array().min(1).items(Joi.object().keys(
   { name: Joi.string().required().description('commonly-known name of provider'),
     site: Joi.string().uri().required().description('associated website'),
     server: Joi.string().uri({ schema: /https?/ }).required().description('HTTP(s) location of service'),
