@@ -19,7 +19,7 @@ Do so using a list of blockchain reporters (providers) that is weighted over tim
 
 Each of these properties is mandatory:
 
-        require('ledger-balance').providers.push({ name     : 'commonly-known name'
+        require('ledger-balance').providers.push({ name     : 'commonly-known name of provider'
                                                  , site     : 'https://example.com/'
                                                  , server   : 'https://api.example.com'
                                                  , path     : '"/v1/address" + address'

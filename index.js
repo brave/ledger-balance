@@ -3,8 +3,21 @@
 var datax = require('data-expression')
 var http = require('http')
 var https = require('https')
+var Joi = require('joi')
 var underscore = require('underscore')
 var url = require('url')
+
+var schema = Joi.array().items(Joi.object().keys(
+  { name: Joi.string().required().description('commonly-known name of provider'),
+    site: Joi.string().uri().required().description('associated website'),
+    server: Joi.string().uri({ schema: /https?/ }).required().description('HTTP(s) location of service'),
+    path: Joi.string().required().description('path to evaluate for endpoint'),
+    method: Joi.string().valid('GET', 'POST', 'PUT').optional().description('HTTP method'),
+    payload: Joi.string().optional().description('exprssion to evaluate for HTTP payload'),
+    satoshis: Joi.string().required().description('expression to evaluate to resolve to satoshis'),
+    description: Joi.string().optional().description('a brief annotation')
+  }
+))
 
 var providers = [
   { name: 'Bitcoin Block Explorer',
@@ -216,6 +229,10 @@ var roundTrip = function (params, options, callback) {
 
 module.exports = {
   getBalance: getBalance,
-  roundTrip: roundTrip,
-  providers: providers
+  providers: providers,
+  schema: schema,
+  roundTrip: roundTrip
 }
+
+var validity = Joi.validate(providers, schema)
+if (validity.error) throw new Error(validity.error)
