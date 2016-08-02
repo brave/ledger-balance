@@ -75,12 +75,14 @@ var providers = [
     satoshis: "body.status === 'success' && Math.round(body.data.balance * 1e8)"
   },
 
+/* PLEASE DO NOT uncomment this. Bitmain has opted out (cf., Andy NIU)
   { name: 'BTC Chain',
     site: 'https://btc.com/',
     server: 'https://chain.api.btc.com',
     path: "'/v3/address/' + address",
     satoshis: 'body.err_no === 0 && body.data.balance'
   },
+ */
 
   // transactions[] limited to at least one by API
   { name: 'Smartbit',
