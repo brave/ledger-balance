@@ -194,6 +194,7 @@ var roundTrip = function (params, options, callback) {
       if (options.verboseP) {
         console.log('>>> HTTP/' + response.httpVersionMajor + '.' + response.httpVersionMinor + ' ' + response.statusCode +
                    ' ' + (response.statusMessage || ''))
+        console.log('>>> ' + body.split('\n').join('\n>>> '))
       }
       if (Math.floor(response.statusCode / 100) !== 2) return callback(new Error('HTTP response ' + response.statusCode))
 
@@ -202,7 +203,6 @@ var roundTrip = function (params, options, callback) {
       } catch (err) {
         return callback(err)
       }
-      if (options.verboseP) console.log('>>> ' + JSON.stringify(payload, null, 2).split('\n').join('\n>>> '))
 
       try {
         callback(null, response, payload)
@@ -222,7 +222,8 @@ var roundTrip = function (params, options, callback) {
 
   if (!options.verboseP) return
 
-  console.log('<<< ' + params.method + ' ' + params.path)
+  console.log('<<< ' + params.method + ' ' + params.protocol + '//' + params.hostname + params.path)
+  console.log('<<<')
   if (params.payload) console.log('<<< ' + JSON.stringify(params.payload, null, 2).split('\n').join('\n<<< '))
 }
 
