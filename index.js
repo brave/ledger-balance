@@ -194,7 +194,7 @@ var roundTrip = function (params, options, callback) {
       if (options.verboseP) {
         console.log('>>> HTTP/' + response.httpVersionMajor + '.' + response.httpVersionMinor + ' ' + response.statusCode +
                    ' ' + (response.statusMessage || ''))
-        console.log('>>> ' + body.split('\n').join('\n>>> '))
+        console.log('>>> ' + (body || '').split('\n').join('\n>>> '))
       }
       if (Math.floor(response.statusCode / 100) !== 2) return callback(new Error('HTTP response ' + response.statusCode))
 
