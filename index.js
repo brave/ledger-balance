@@ -172,7 +172,7 @@ var getBalance = function (address, options, callback) {
           provider.score = Math.max(5000 - (underscore.now() - now), -250)
           if ((options.balancesP) && (provider.unconfirmed)) {
             try {
-              result = { confirmed: result, unconfirmed: datax.evaluate(provider.unconfirmed, { body: payload }) }
+              result = { balance: result, unconfirmed: datax.evaluate(provider.unconfirmed, { body: payload }) }
             } catch (ex) {
               if ((options.debugP) || (options.verboseP)) {
                 console.log('provider ' + provider.name + ' has invalid confirmed field [' + provider.confirmed + '] for ' +
