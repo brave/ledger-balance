@@ -123,6 +123,8 @@ var getBalance = function (address, options, callback) {
     callback = options
     options = {}
   }
+  options = underscore.extend({ roundtrip: roundTrip }, options)
+  if (typeof options.roundtrip !== 'function') throw new Error('invalid roundtrip option (must be a function)')
 
   providers.forEach(function (provider) { if (typeof provider.score === 'undefined') provider.score = 0 })
   entries = underscore.sortBy(underscore.shuffle(providers), function (provider) { return provider.score })
@@ -159,7 +161,7 @@ var getBalance = function (address, options, callback) {
     }
 
     now = underscore.now()
-    roundTrip(params, options, function (err, response, payload) {
+    options.roundtrip(params, options, function (err, response, payload) {
       var result
 
       if (err) {
@@ -258,8 +260,7 @@ var roundTrip = function (params, options, callback) {
 module.exports = {
   getBalance: getBalance,
   providers: providers,
-  schema: schema,
-  roundTrip: roundTrip
+  schema: schema
 }
 
 var validity = Joi.validate(providers, schema)
