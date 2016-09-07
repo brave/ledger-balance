@@ -11,7 +11,7 @@ var schema = Joi.array().min(1).items(Joi.object().keys(
     server: Joi.string().uri({ schema: /https?/ }).required().description('HTTP(s) location of service'),
     path: Joi.string().required().description('path to evaluate for endpoint'),
     method: Joi.string().valid('GET', 'POST', 'PUT').optional().description('HTTP method'),
-    payload: Joi.string().optional().description('exprssion to evaluate for HTTP payload'),
+    payload: Joi.string().optional().description('expression to evaluate for HTTP payload'),
     confirmed: Joi.string().required().description('expression to evaluate to resolve to satoshis'),
     unconfirmed: Joi.string().optional().description('expression to evaluate to resolve to satoshis'),
     description: Joi.string().optional().description('a brief annotation')
@@ -119,7 +119,7 @@ var providers = [
 var getBalance = function (address, options, callback) {
   var entries
 
-  if (typeof 'options' === 'function') {
+  if (typeof options === 'function') {
     callback = options
     options = {}
   }
@@ -184,6 +184,7 @@ var getBalance = function (address, options, callback) {
           }
           callback(null, provider, result)
           if (options.allP) return f(i)
+
           return
         }
 
@@ -223,7 +224,7 @@ var roundTrip = function (params, options, callback) {
       if (options.verboseP) {
         console.log('>>> HTTP/' + response.httpVersionMajor + '.' + response.httpVersionMinor + ' ' + response.statusCode +
                    ' ' + (response.statusMessage || ''))
-        console.log('>>> via: ' + params.hostname + params.path)
+        console.log('>>> via: ' + params.hostname + (params.path || ''))
         console.log('>>> ' + (body || '').split('\n').join('\n>>> '))
       }
       if (Math.floor(response.statusCode / 100) !== 2) return callback(new Error('HTTP response ' + response.statusCode))
@@ -237,7 +238,7 @@ var roundTrip = function (params, options, callback) {
       try {
         callback(null, response, payload)
       } catch (err0) {
-        if (options.verboseP) console.log('callback: ' + err0.tostring() + '\n' + err0.stack)
+        if (options.verboseP) console.log('callback: ' + err0.toString() + '\n' + err0.stack)
       }
     }).setEncoding('utf8')
   }).on('error', function (err) {
@@ -252,7 +253,7 @@ var roundTrip = function (params, options, callback) {
 
   if (!options.verboseP) return
 
-  console.log('<<< ' + params.method + ' ' + params.protocol + '//' + params.hostname + params.path)
+  console.log('<<< ' + params.method + ' ' + params.protocol + '//' + params.hostname + (params.path || ''))
   console.log('<<<')
   if (params.payload) console.log('<<< ' + JSON.stringify(params.payload, null, 2).split('\n').join('\n<<< '))
 }
