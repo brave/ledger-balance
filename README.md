@@ -39,11 +39,11 @@ then the provider's score is set to a number between `-250` and `5000` that corr
 
 Each of these properties is mandatory:
 
-        require('ledger-balance').providers.push({ name     : 'commonly-known name of provider'
-                                                 , site     : 'https://example.com/'
-                                                 , server   : 'https://api.example.com'
-                                                 , path     : '"/v1/address" + address'
-                                                 , satoshis : 'body.confirmed_satoshis'
+        require('ledger-balance').providers.push({ name      : 'commonly-known name of provider'
+                                                 , site      : 'https://example.com/'
+                                                 , server    : 'https://api.example.com'
+                                                 , path      : '"/v1/address" + address'
+                                                 , confirmed : 'body.confirmed_satoshis'
                                                  })
 
 The default value for the `method` is `"GET"`;
@@ -53,9 +53,11 @@ Both the mandatory `path` property and the optional `payload` property are evalu
 
         { address: '3...' }
 
-The mandatory `satoshis` property is evaluated with this context:
+The mandatory `confirmed` property is evaluated with this context:
 
         { body: JSON.parse(HTTP_response_body) }
+
+There is also an optional `unconfirmed` property that is evaluated in the same context.
 
 ## Finally...
 
