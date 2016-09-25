@@ -59,7 +59,7 @@ var providers = [
   { name: 'BlockCypher',
     site: 'https://www.blockcypher.com/',
     server: 'https://api.blockcypher.com',
-    path: "'/v1/btc/main/addrs/' + address + '/balance'",
+    path: "'/v1/btc/' + (isTestnetAddress(address) ? 'main' : 'test3') + '/addrs/' + address + '/balance'",
     confirmed: 'body.balance',
     unconfirmed: 'body.unconfirmed_balance'
   },
@@ -256,6 +256,13 @@ var roundTrip = function (params, options, callback) {
   console.log('<<< ' + params.method + ' ' + params.protocol + '//' + params.hostname + (params.path || ''))
   console.log('<<<')
   if (params.payload) console.log('<<< ' + JSON.stringify(params.payload, null, 2).split('\n').join('\n<<< '))
+}
+
+var isTestnetAddress = function (address) {
+  let addressPrefix = (address || '1')[0]
+
+  // check address prefix characters at https://en.bitcoin.it/wiki/List_of_address_prefixes
+  return (['m','n','2'].indexOf(addressPrefix) !== -1)
 }
 
 module.exports = {
