@@ -14,7 +14,8 @@ var schema = Joi.array().min(1).items(Joi.object().keys(
     payload: Joi.string().optional().description('expression to evaluate for HTTP payload'),
     confirmed: Joi.string().required().description('expression to evaluate to resolve to satoshis'),
     unconfirmed: Joi.string().optional().description('expression to evaluate to resolve to satoshis'),
-    description: Joi.string().optional().description('a brief annotation')
+    description: Joi.string().optional().description('a brief annotation'),
+    supports_testnet: Joi.boolean().optional().description('boolean indicating whether provider supports testnet addresses')
   }
 ))
 
@@ -59,9 +60,10 @@ var providers = [
   { name: 'BlockCypher',
     site: 'https://www.blockcypher.com/',
     server: 'https://api.blockcypher.com',
-    path: "'/v1/btc/' + (isTestnetAddress(address) ? 'main' : 'test3') + '/addrs/' + address + '/balance'",
+    path: "'/v1/btc/' + (useTestnet ? 'test3' : 'main') + '/addrs/' + address + '/balance'",
     confirmed: 'body.balance',
-    unconfirmed: 'body.unconfirmed_balance'
+    unconfirmed: 'body.unconfirmed_balance',
+    supports_testnet: true
   },
 
   { name: 'Blockonomics',
@@ -126,11 +128,19 @@ var getBalance = function (address, options, callback) {
   options = underscore.extend({ roundtrip: roundTrip }, options)
   if (typeof options.roundtrip !== 'function') throw new Error('invalid roundtrip option (must be a function)')
 
-  providers.forEach(function (provider) { if (typeof provider.score === 'undefined') provider.score = 0 })
-  entries = underscore.sortBy(underscore.shuffle(providers), function (provider) { return provider.score })
+  let useTestnet = isTestnetAddress(address)
+  var providersToCheck = providers
+  if(useTestnet) {
+      providersToCheck = providersToCheck.filter(function (provider) {
+        return provider.supports_testnet
+      })
+  }
+
+  providersToCheck.forEach(function (provider) { if (typeof provider.score === 'undefined') provider.score = 0 })
+  entries = underscore.sortBy(underscore.shuffle(providersToCheck), function (provider) { return provider.score })
 
   var e = function (provider, field) {
-    var result = datax.evaluate(provider[field], { address: address })
+    var result = datax.evaluate(provider[field], { address: address, useTestnet: useTestnet })
 
     if (result) return result
 
@@ -268,7 +278,8 @@ var isTestnetAddress = function (address) {
 module.exports = {
   getBalance: getBalance,
   providers: providers,
-  schema: schema
+  schema: schema,
+  isTestnetAddress: isTestnetAddress
 }
 
 var validity = Joi.validate(providers, schema)
