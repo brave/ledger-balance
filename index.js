@@ -14,8 +14,8 @@ var schema = Joi.array().min(1).items(Joi.object().keys(
     payload: Joi.string().optional().description('expression to evaluate for HTTP payload'),
     confirmed: Joi.string().required().description('expression to evaluate to resolve to satoshis'),
     unconfirmed: Joi.string().optional().description('expression to evaluate to resolve to satoshis'),
-    description: Joi.string().optional().description('a brief annotation'),
-    supports_testnet: Joi.boolean().optional().description('boolean indicating whether provider supports testnet addresses')
+    testnetP: Joi.boolean().optional().description('supports testnet addresses'),
+    description: Joi.string().optional().description('a brief annotation')
   }
 ))
 
@@ -60,10 +60,10 @@ var providers = [
   { name: 'BlockCypher',
     site: 'https://www.blockcypher.com/',
     server: 'https://api.blockcypher.com',
-    path: "'/v1/btc/' + (useTestnet ? 'test3' : 'main') + '/addrs/' + address + '/balance'",
+    path: "'/v1/btc/' + (testnetP ? 'test3' : 'main') + '/addrs/' + address + '/balance'",
     confirmed: 'body.balance',
     unconfirmed: 'body.unconfirmed_balance',
-    supports_testnet: true
+    testnetP: true
   },
 
   { name: 'Blockonomics',
@@ -119,7 +119,7 @@ var providers = [
 ]
 
 var getBalance = function (address, options, callback) {
-  var entries
+  var entries, services, testnetP
 
   if (typeof options === 'function') {
     callback = options
@@ -128,19 +128,14 @@ var getBalance = function (address, options, callback) {
   options = underscore.extend({ roundtrip: roundTrip }, options)
   if (typeof options.roundtrip !== 'function') throw new Error('invalid roundtrip option (must be a function)')
 
-  let useTestnet = isTestnetAddress(address)
-  var providersToCheck = providers
-  if(useTestnet) {
-      providersToCheck = providersToCheck.filter(function (provider) {
-        return provider.supports_testnet
-      })
-  }
+  testnetP = testnetAddressP(address)
+  services = testnetP ? providers.filter(function (provider) { return provider.testnetP }) : providers
 
-  providersToCheck.forEach(function (provider) { if (typeof provider.score === 'undefined') provider.score = 0 })
-  entries = underscore.sortBy(underscore.shuffle(providersToCheck), function (provider) { return provider.score })
+  services.forEach(function (provider) { if (typeof provider.score === 'undefined') provider.score = 0 })
+  entries = underscore.sortBy(underscore.shuffle(services), function (provider) { return provider.score })
 
   var e = function (provider, field) {
-    var result = datax.evaluate(provider[field], { address: address, useTestnet: useTestnet })
+    var result = datax.evaluate(provider[field], { address: address, testnetP: testnetP })
 
     if (result) return result
 
@@ -268,18 +263,16 @@ var roundTrip = function (params, options, callback) {
   if (params.payload) console.log('<<< ' + JSON.stringify(params.payload, null, 2).split('\n').join('\n<<< '))
 }
 
-var isTestnetAddress = function (address) {
-  let addressPrefix = (address || '1')[0]
-
+var testnetAddressP = function (address) {
   // check address prefix characters at https://en.bitcoin.it/wiki/List_of_address_prefixes
-  return (['m','n','2'].indexOf(addressPrefix) !== -1)
+  return (['m', 'n', '2'].indexOf((address || '1')[0]) !== -1)
 }
 
 module.exports = {
   getBalance: getBalance,
   providers: providers,
   schema: schema,
-  isTestnetAddress: isTestnetAddress
+  testnetAddressP: testnetAddressP
 }
 
 var validity = Joi.validate(providers, schema)
