@@ -4,7 +4,7 @@
   "description": "Find the balance associated with a Bitcoin wallet.",
   "main": "index.js",
   "scripts": {
-    "lint": "gulp lint",
+    "lint": "standard",
     "test": "npm run test-security",
     "test-security": "nsp check"
   },
@@ -32,6 +32,7 @@
     "gulp": "^3.9.0",
     "gulp-standard": "^5.2.2",
     "nsp": "^2.2.0",
-    "run-sequence": "^1.1.0"
+    "run-sequence": "^1.1.0",
+    "standard": "8.1.0"
   }
 }
