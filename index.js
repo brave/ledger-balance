@@ -36,12 +36,14 @@ var providers = [
 //  unconfirmed: 'body.unconfirmedBalanceSat'
   },
 
+/* 2016-12-05: too many 502s
   { name: 'BitcoinChain.com',
     site: 'https://bitcoinchain.com/',
     server: 'https://api-r.bitcoinchain.com',
     path: "'/v1/address/' + address",
     confirmed: 'body[0].unconfirmed_transactions_count === 0 && Math.round(body[0].balance * 1e8)'
   },
+ */
 
   { name: 'biteasy',
     site: 'https://www.biteasy.com/',
@@ -82,6 +84,14 @@ var providers = [
     confirmed: "body.status === 'success' && Math.round(body.data.balance * 1e8)"
   },
 
+  { name: 'Brave Software',
+    site: 'https://blockchain.brave.com',
+    server: 'https://blockchain.brave.com',
+    path: "'/insight-api/addr/' + address + '?noTxList=1'",
+    confirmed: 'body.balanceSat'
+//  unconfirmed: 'body.unconfirmedBalanceSat'
+  },
+
 /* PLEASE DO NOT uncomment this. Bitmain has opted out (cf., Andy Niu)
   { name: 'BTC Chain',
     site: 'https://btc.com/',
@@ -107,8 +117,9 @@ var providers = [
     path: "'/api/v2/address/BTC/' + address",
     confirmed: "body.status === 'success' && Math.round(body.data.balance * 1e8)"
 //  unconfirmed: "body.status === 'success' && Math.round(body.data.pending_value * 1e8)"
-  },
+  }
 
+/* 2016-12-05: too many 404s...
   { name: 'Toshi',
     site: 'https://toshi.io/',
     server: 'https://bitcoin.toshi.io',
@@ -116,6 +127,7 @@ var providers = [
     confirmed: 'body.balance',
     unconfirmed: 'body.unconfirmed_balance'
   }
+ */
 ]
 
 var getBalance = function (address, options, callback) {

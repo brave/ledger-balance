@@ -1,6 +1,5 @@
 var addresses = [
-  '3PnrcAMkR7BfwkR1q3epPe2K52eYAZnu5s',
-  '2N6YwaWJQG5aUPXsG4xiBdVz9ZyooAB7RLj'
+  '3KFFjMuLcHiPoV5bzpo3FHD7vwMhZd8CXe'
 ]
 var ledgerBalance = require('.')
 
