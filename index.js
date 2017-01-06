@@ -210,7 +210,7 @@ var getBalance = function (address, options, callback) {
         provider.score = -1001
       }
 
-      callback(err, provider)
+      callback(new BalanceError(err, provider.name), provider)
       f(i)
     })
   }
@@ -249,7 +249,7 @@ var roundTrip = function (params, options, callback) {
       try {
         payload = (response.statusCode !== 204) ? JSON.parse(body) : null
       } catch (err) {
-        return callback(err)
+        return callback(new BalanceError(err, url.format(params)))
       }
 
       try {
@@ -259,7 +259,7 @@ var roundTrip = function (params, options, callback) {
       }
     }).setEncoding('utf8')
   }).on('error', function (err) {
-    callback(err)
+    callback(new BalanceError(err, url.format(params)))
   }).on('timeout', function () {
     timeoutP = true
     callback(new Error('timeout'))
@@ -273,6 +273,13 @@ var roundTrip = function (params, options, callback) {
   console.log('<<< ' + params.method + ' ' + params.protocol + '//' + params.hostname + (params.path || ''))
   console.log('<<<')
   if (params.payload) console.log('<<< ' + JSON.stringify(params.payload, null, 2).split('\n').join('\n<<< '))
+}
+
+var BalanceError = function (err, name) {
+  if (!(this instanceof BalanceError)) return BalanceError(err, name)
+
+  underscore.extend(this, underscore.pick(err, [ 'columnNumber', 'fileName', 'lineNumber', 'name', 'stack' ]))
+  this.message = name + ': ' + underscore.message
 }
 
 var testnetAddressP = function (address) {
