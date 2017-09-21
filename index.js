@@ -84,6 +84,7 @@ var providers = [
     confirmed: "body.status === 'success' && Math.round(body.data.balance * 1e8)"
   },
 
+  /* Shutdown in anticipation for move to BAT
   { name: 'Brave Software',
     site: 'https://blockchain.brave.com',
     server: 'https://blockchain.brave.com',
@@ -91,6 +92,7 @@ var providers = [
     confirmed: 'body.balanceSat'
 //  unconfirmed: 'body.unconfirmedBalanceSat'
   },
+  */
 
 /* PLEASE DO NOT uncomment this. Bitmain has opted out (cf., Andy Niu)
   { name: 'BTC Chain',
