@@ -1,3 +1,4 @@
+# NOTE: This repo is deprecated, please see [bat-ledger](https://github.com/brave-intl/bat-balance)
 # ledger-balance
 Find the balance associated with a Bitcoin wallet.
 Do so using a list of blockchain reporters (providers) that is weighted over time.
